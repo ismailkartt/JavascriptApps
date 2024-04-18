@@ -9,8 +9,11 @@ const searchShows = (query,cb) => {
 
 }
 
-const getShowsDetails = () => {
-
+const getShowsDetails = (showId,cb) => {
+    const url = `${baseUrl}/shows/${showId}`;
+    fetch(url)
+    .then( (resp) => resp.json())
+    .then( data => cb(data));
 }
 
 

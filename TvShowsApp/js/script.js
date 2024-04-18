@@ -1,41 +1,43 @@
-import {searchShows} from './tvmaze-api.js'
+import { searchShows } from "./tvmaze-api.js";
 
 let timeoutSearch = null;
+const lstTvShows = document.getElementById("lstTvShows");
 
-document.getElementById("txtSearch").addEventListener("input" , (e) => {
-    const query = e.target.value;
+document.getElementById("txtSearch").addEventListener("input", (e) => {
+  const query = e.target.value;
 
-    if(timeoutSearch) clearTimeout(timeoutSearch);
-    timeoutSearch = setTimeout(()=>{
-        searchShows(query,(shows)=>{
-            createMovies(shows)
-        });
-    },500)
-
+  if (timeoutSearch) clearTimeout(timeoutSearch);
+  timeoutSearch = setTimeout(() => {
+    searchShows(query, (shows) => {
+      createMovies(shows);
+    });
+  }, 500);
 });
 
+lstTvShows.addEventListener("click", (e) => {
+  const selectedCard = e.target.closest(".card");
+  const showId = selectedCard.dataset.show;
+  location.href = `tvShows-details.html?id=${showId}`;
+});
 
 const createMovies = (shows) => {
-    const lstTvShows = document.getElementById("lstTvShows");
+  lstTvShows.innerHTML = "";
+  shows.forEach((item) => {
+    const movieCard = createMovieCard(item);
+    lstTvShows.insertAdjacentHTML("afterbegin", movieCard);
+  });
+};
 
-    lstTvShows.innerHTML = "";
-    shows.forEach((item) => {
-        const movieCard = createMovieCard(item);
-        lstTvShows.insertAdjacentHTML("afterbegin",movieCard);
-    });
-}
+const createMovieCard = (item) => {
+  const { id, image, name, genres } = item.show;
 
-const createMovieCard = (item)=>{
-    const {image,name,genres} = item.show;
+  let movieImage = "image/No-Image-Placeholder.svg.png";
+  if (image) {
+    movieImage = image.medium;
+  }
 
-    let movieImage = "image/No-Image-Placeholder.svg.png";
-    if(image){
-        movieImage = image.medium;
-    }
-
-
-    return `<div class="col">
-    <div class="card h-100">
+  return `<div class="col">
+    <div class="card h-100" style=cursor:pointer data-show="${id}">
         <img src="${movieImage}" class="card-img-top" alt="${name}">
         <div class="card-body">
             <h5 class="card-title">${name}</h5>                        
@@ -43,6 +45,4 @@ const createMovieCard = (item)=>{
         </div>
     </div>
 </div>`;
-}
-
-
+};
